@@ -10,33 +10,52 @@
     </script>
   </head>
   <body>
-    <canvas nx="button" id="chord"></canvas>
+    <canvas nx="matrix" id="chord" width="500" height="500"></canvas>
+    <br />
+    <canvas nx="button" id="b1"></canvas>
+    <canvas nx="button" id="b2"></canvas>
+    <canvas nx="button" id="b3"></canvas>
   </body>
   <script>
-    var distortion = new Tone.Distortion(0.6)
+    var distortion = new Tone.Distortion(0.1)
     var tremolo = new Tone.Tremolo().start()
 
-    var polySynth = new Tone.PolySynth(4, Tone.Synth).chain(distortion, tremolo, Tone.Master)
+    // distortion, tremolo,
+    var polySynth = new Tone.PolySynth(8, Tone.Synth).chain(Tone.Master)
 
     nx.onload = function() {
-      chord.on('*', function(data) {
-        if (data.press === 1) {
-          polySynth.triggerAttack(['C4', 'E4', 'G4', 'B4']);
-        }
-        if (data.press === 0) {
-          polySynth.triggerRelease(['C4', 'E4', 'G4', 'B4'])
-        }
-        console.log(data);
-        // some code using data.press, data.x, and data.y
+      chord.row = 8;
+      chord.col = 3;
+      chord.init();
+
+      [b1, b2, b3].forEach(function(g, i) {
+        b.on('*', function(data) {
+
+          if (data.press === 1) {
+            noteOn(chord.matrix[i]);
+          }
+
+          if (data.press === 0) {
+            noteOff(chord.matrix[i]);
+          }
+        });
       });
     };
 
-    // document.querySelector('#chord').addEventListener('mousedown', function(){
-    //   polySynth.triggerAttack(['C4', 'E4', 'G4', 'B4'])
-    // })
-    //
-    // document.querySelector('#chord').addEventListener('mouseup', function(){
-    //   polySynth.triggerRelease(['C4', 'E4', 'G4', 'B4'])
-    // })
+    function noteOn(notes) {
+      let midis = [];
+      notes.forEach(function(n, i) {
+        if (n === 1) {
+          midis.push(Tone.Frequency(50 + i, "midi").eval());
+        }
+      });
+
+      polySynth.triggerAttack(midis);
+    }
+
+    function noteOff(notes) {
+      polySynth.releaseAll();
+    }
+
   </script>
 </html>
