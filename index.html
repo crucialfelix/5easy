@@ -28,7 +28,7 @@
       chord.col = 3;
       chord.init();
 
-      [b1, b2, b3].forEach(function(g, i) {
+      [b1, b2, b3].forEach(function(b, i) {
         b.on('*', function(data) {
 
           if (data.press === 1) {
@@ -46,7 +46,7 @@
       let midis = [];
       notes.forEach(function(n, i) {
         if (n === 1) {
-          midis.push(Tone.Frequency(50 + i, "midi").eval());
+          midis.push(Tone.Frequency(50 + i, "midi").toFrequency());
         }
       });
 
